@@ -33,12 +33,46 @@ function InboxPage() {
 
   return (
     <AppShell>
-      <div className="max-w-[1400px] mx-auto space-y-4">
-        <div className="bg-card rounded-xl border border-border p-4">
-          <Input placeholder="Search by name, ID..." value={search} onChange={(e) => setSearch(e.target.value)} className="bg-muted/50 border-transparent" />
+      <div className="max-w-[1400px] mx-auto space-y-3 md:space-y-4">
+        <div className="bg-card rounded-xl border border-border p-3 md:p-4">
+          <Input placeholder="Search by name, ID, type…" value={search} onChange={(e) => setSearch(e.target.value)} className="bg-muted/50 border-transparent" />
         </div>
 
-        <div className="bg-card rounded-xl border border-border overflow-hidden">
+        {/* Mobile card list */}
+        <div className="md:hidden space-y-2">
+          {rows.map((r) => {
+            const name = (r.profiles as { full_name?: string } | null)?.full_name ?? "Unknown";
+            return (
+              <Link key={r.id} to="/requests/$id" params={{ id: r.id }} className="block bg-card rounded-xl border border-border p-3 active:bg-muted/40">
+                <div className="flex items-start gap-3">
+                  <div className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold shrink-0">
+                    {initialsOf(name)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <p className="font-semibold text-sm truncate">{name}</p>
+                      <span className="text-[10px] font-mono bg-muted rounded px-1.5 py-0.5 shrink-0">{r.code}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground truncate">{r.department} · {r.request_type}</p>
+                    <div className="flex items-center justify-between mt-2 gap-2">
+                      <span className="font-semibold text-sm">{formatMoney(Number(r.amount))}</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className={"text-[10px] px-2 py-0.5 rounded-full font-medium capitalize " + (PRIORITY_STYLES[r.priority] ?? "")}>{r.priority}</span>
+                        <span className={"text-[10px] px-2 py-0.5 rounded-full font-medium " + (STATUS_STYLES[r.status] ?? "")}>{STATUS_LABEL[r.status]}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+          {rows.length === 0 && (
+            <div className="bg-card rounded-xl border border-border py-10 text-center text-sm text-muted-foreground">No requests found</div>
+          )}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden md:block bg-card rounded-xl border border-border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-muted/60 text-muted-foreground">
