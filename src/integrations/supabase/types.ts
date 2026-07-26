@@ -21,6 +21,7 @@ export type Database = {
           department: string
           full_name: string
           id: string
+          signature_url: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -28,6 +29,7 @@ export type Database = {
           department?: string
           full_name?: string
           id: string
+          signature_url?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -35,6 +37,7 @@ export type Database = {
           department?: string
           full_name?: string
           id?: string
+          signature_url?: string | null
         }
         Relationships: []
       }
@@ -126,6 +129,8 @@ export type Database = {
           request_date: string
           request_type: string
           requester_id: string
+          signature_meta: Json | null
+          signed_pdf_path: string | null
           status: Database["public"]["Enums"]["request_status"]
           updated_at: string
         }
@@ -143,6 +148,8 @@ export type Database = {
           request_date?: string
           request_type: string
           requester_id: string
+          signature_meta?: Json | null
+          signed_pdf_path?: string | null
           status?: Database["public"]["Enums"]["request_status"]
           updated_at?: string
         }
@@ -160,6 +167,8 @@ export type Database = {
           request_date?: string
           request_type?: string
           requester_id?: string
+          signature_meta?: Json | null
+          signed_pdf_path?: string | null
           status?: Database["public"]["Enums"]["request_status"]
           updated_at?: string
         }
