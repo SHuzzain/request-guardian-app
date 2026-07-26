@@ -341,7 +341,7 @@ function SignerDialog({
     try {
       const bytes = await signerApi.current.signAndGetBytes();
       const outPath = `${request.requester_id}/${request.id}/signed-${Date.now()}.pdf`;
-      const { error: upErr } = await supabase.storage.from("attachments").upload(outPath, new Blob([bytes], { type: "application/pdf" }), {
+      const { error: upErr } = await supabase.storage.from("attachments").upload(outPath, new Blob([bytes as BlobPart], { type: "application/pdf" }), {
         contentType: "application/pdf",
         upsert: true,
       });
