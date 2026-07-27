@@ -65,7 +65,7 @@ function CreatePage() {
           amount: String(r.amount ?? ""),
           payment_method: r.payment_method ?? "",
         });
-        if (r.signature_meta) setPlacement(r.signature_meta as SignaturePlacement);
+        if (r.signature_meta) setPlacement(r.signature_meta as unknown as SignaturePlacement);
       }
       setExistingAttachments(att ?? []);
     })();
