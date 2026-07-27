@@ -65,10 +65,39 @@ function CreatePage() {
           amount: String(r.amount ?? ""),
           payment_method: r.payment_method ?? "",
         });
+        if (r.signature_meta) setPlacement(r.signature_meta as SignaturePlacement);
       }
       setExistingAttachments(att ?? []);
     })();
   }, [editId]);
+
+  // Load PDF bytes for placement preview — prefer a newly picked file, else first existing PDF
+  const firstNewPdf = useMemo(() => files.find((f) => f.type === "application/pdf") ?? null, [files]);
+  const firstExistingPdf = useMemo(
+    () => existingAttachments.find((a) => (a.mime_type ?? "").includes("pdf")) ?? null,
+    [existingAttachments],
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (firstNewPdf) {
+        const buf = await firstNewPdf.arrayBuffer();
+        if (!cancelled) setPreviewBytes(buf);
+        return;
+      }
+      if (firstExistingPdf) {
+        const { data } = await supabase.storage.from("attachments").createSignedUrl(firstExistingPdf.storage_path, 300);
+        if (!data?.signedUrl) return;
+        const buf = await (await fetch(data.signedUrl)).arrayBuffer();
+        if (!cancelled) setPreviewBytes(buf);
+        return;
+      }
+      setPreviewBytes(null);
+    })();
+    return () => { cancelled = true; };
+  }, [firstNewPdf, firstExistingPdf]);
+
 
   const setF = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm((s) => ({ ...s, [k]: v }));
 
