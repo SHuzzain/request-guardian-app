@@ -72,6 +72,17 @@ function SettingsPage() {
     } finally { setSaving(false); }
   }
 
+  if (!isLoading && user && !user.isAdmin) {
+    return (
+      <AppShell>
+        <div className="max-w-md mx-auto text-center py-16">
+          <h1 className="text-xl font-bold">Admins only</h1>
+          <p className="text-sm text-muted-foreground mt-2">The signature settings are managed by administrators.</p>
+        </div>
+      </AppShell>
+    );
+  }
+
   return (
     <AppShell>
       <div className="max-w-2xl mx-auto space-y-6">
