@@ -282,6 +282,25 @@ function CreatePage() {
             )}
           </Section>
 
+          <Section title="Signature placement">
+            <p className="text-xs text-muted-foreground -mt-2">
+              Drag the box to mark where the admin should sign. The admin will see this placement and can fine-tune before approving.
+            </p>
+            {previewBytes ? (
+              <PdfSigner
+                pdfBytes={previewBytes}
+                signatureDataUrl={null}
+                initialPlacement={placement ?? undefined}
+                onPlacementChange={setPlacement}
+              />
+            ) : (
+              <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+                Attach a PDF above to mark the signature spot.
+              </div>
+            )}
+          </Section>
+
+
           <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4 border-t border-border">
             <Button type="button" variant="outline" onClick={() => navigate({ to: "/dashboard" })}>Cancel</Button>
             <Button type="submit" disabled={loading}>
