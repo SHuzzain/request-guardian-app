@@ -6,6 +6,7 @@ import { AppShell } from "@/components/app-shell";
 import { Input } from "@/components/ui/input";
 import { STATUS_STYLES, STATUS_LABEL, PRIORITY_STYLES, initialsOf, formatMoney } from "@/lib/request-utils";
 import { useState } from "react";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 export const Route = createFileRoute("/_authenticated/inbox")({
   head: () => ({ meta: [{ title: "Approval Inbox — Smart Approval System" }] }),
@@ -14,6 +15,7 @@ export const Route = createFileRoute("/_authenticated/inbox")({
 
 function InboxPage() {
   const [search, setSearch] = useState("");
+  const { data: user, isLoading: userLoading } = useCurrentUser();
   const { data } = useQuery({
     queryKey: ["requests-inbox"],
     queryFn: async () => {
@@ -30,6 +32,17 @@ function InboxPage() {
     const name = (r.profiles as { full_name?: string } | null)?.full_name ?? "";
     return `${r.code} ${name} ${r.request_type}`.toLowerCase().includes(search.toLowerCase());
   });
+
+  if (!userLoading && user && !user.isAdmin) {
+    return (
+      <AppShell>
+        <div className="max-w-md mx-auto text-center py-16">
+          <h1 className="text-xl font-bold">Admins only</h1>
+          <p className="text-sm text-muted-foreground mt-2">The approval inbox is available to administrators.</p>
+        </div>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell>

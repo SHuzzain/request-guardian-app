@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useQueryClient } from "@tanstack/react-query";
 
-const NAV = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutGrid },
-  { to: "/inbox", label: "Inbox", icon: Inbox },
-  { to: "/create", label: "Create", icon: FilePlus2 },
-  { to: "/settings", label: "Settings", icon: Settings },
+const NAV_ALL = [
+  { to: "/dashboard", label: "Dashboard", icon: LayoutGrid, adminOnly: false },
+  { to: "/inbox", label: "Inbox", icon: Inbox, adminOnly: true },
+  { to: "/create", label: "Create", icon: FilePlus2, adminOnly: false },
+  { to: "/settings", label: "Settings", icon: Settings, adminOnly: true },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -20,6 +20,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
+  const NAV = NAV_ALL.filter((n) => !n.adminOnly || user?.isAdmin);
 
   async function signOut() {
     await queryClient.cancelQueries();
@@ -132,7 +133,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <main className="flex-1 p-3 md:p-6 overflow-auto pb-24 md:pb-6">{children}</main>
 
         {/* Mobile bottom nav */}
-        <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-card border-t border-border grid grid-cols-4">
+        <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-card border-t border-border flex">
           {NAV.map((item) => {
             const active = pathname === item.to || pathname.startsWith(item.to + "/");
             const Icon = item.icon;
@@ -141,7 +142,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 key={item.to}
                 to={item.to}
                 className={
-                  "flex flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium " +
+                  "flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium " +
                   (active ? "text-primary" : "text-muted-foreground")
                 }
               >

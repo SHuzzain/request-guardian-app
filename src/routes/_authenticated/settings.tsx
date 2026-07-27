@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated/settings")({
 });
 
 function SettingsPage() {
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading } = useCurrentUser();
   const qc = useQueryClient();
   const [preview, setPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -70,6 +70,17 @@ function SettingsPage() {
       setPreview(null);
       toast.success("Signature removed");
     } finally { setSaving(false); }
+  }
+
+  if (!isLoading && user && !user.isAdmin) {
+    return (
+      <AppShell>
+        <div className="max-w-md mx-auto text-center py-16">
+          <h1 className="text-xl font-bold">Admins only</h1>
+          <p className="text-sm text-muted-foreground mt-2">The signature settings are managed by administrators.</p>
+        </div>
+      </AppShell>
+    );
   }
 
   return (
