@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useQueryClient } from "@tanstack/react-query";
 
-const NAV = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutGrid },
-  { to: "/inbox", label: "Inbox", icon: Inbox },
-  { to: "/create", label: "Create", icon: FilePlus2 },
-  { to: "/settings", label: "Settings", icon: Settings },
+const NAV_ALL = [
+  { to: "/dashboard", label: "Dashboard", icon: LayoutGrid, adminOnly: false },
+  { to: "/inbox", label: "Inbox", icon: Inbox, adminOnly: true },
+  { to: "/create", label: "Create", icon: FilePlus2, adminOnly: false },
+  { to: "/settings", label: "Settings", icon: Settings, adminOnly: true },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
