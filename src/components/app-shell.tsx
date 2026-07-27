@@ -20,6 +20,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
+  const NAV = NAV_ALL.filter((n) => !n.adminOnly || user?.isAdmin);
 
   async function signOut() {
     await queryClient.cancelQueries();
