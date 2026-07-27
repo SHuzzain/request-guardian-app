@@ -14,6 +14,7 @@ export const Route = createFileRoute("/_authenticated/inbox")({
 
 function InboxPage() {
   const [search, setSearch] = useState("");
+  const { data: user, isLoading: userLoading } = useCurrentUser();
   const { data } = useQuery({
     queryKey: ["requests-inbox"],
     queryFn: async () => {
