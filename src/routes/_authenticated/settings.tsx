@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated/settings")({
 });
 
 function SettingsPage() {
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading } = useCurrentUser();
   const qc = useQueryClient();
   const [preview, setPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
