@@ -33,6 +33,17 @@ function InboxPage() {
     return `${r.code} ${name} ${r.request_type}`.toLowerCase().includes(search.toLowerCase());
   });
 
+  if (!userLoading && user && !user.isAdmin) {
+    return (
+      <AppShell>
+        <div className="max-w-md mx-auto text-center py-16">
+          <h1 className="text-xl font-bold">Admins only</h1>
+          <p className="text-sm text-muted-foreground mt-2">The approval inbox is available to administrators.</p>
+        </div>
+      </AppShell>
+    );
+  }
+
   return (
     <AppShell>
       <div className="max-w-[1400px] mx-auto space-y-3 md:space-y-4">
