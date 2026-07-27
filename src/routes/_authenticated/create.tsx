@@ -130,7 +130,9 @@ function CreatePage() {
         description: form.description || null,
         amount: Number(form.amount || 0),
         payment_method: form.payment_method || null,
+        signature_meta: (placement ?? null) as unknown as never,
       };
+
 
       let requestId = editId;
       if (isEdit && editId) {
