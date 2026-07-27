@@ -6,6 +6,7 @@ import { AppShell } from "@/components/app-shell";
 import { Input } from "@/components/ui/input";
 import { STATUS_STYLES, STATUS_LABEL, PRIORITY_STYLES, initialsOf, formatMoney } from "@/lib/request-utils";
 import { useState } from "react";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 export const Route = createFileRoute("/_authenticated/inbox")({
   head: () => ({ meta: [{ title: "Approval Inbox — Smart Approval System" }] }),
