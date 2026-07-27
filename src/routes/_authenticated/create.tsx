@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { UploadCloud, FileText, X, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/app-shell";
@@ -9,12 +9,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { PdfSigner, type SignaturePlacement } from "@/components/pdf-signer";
 
 export const Route = createFileRoute("/_authenticated/create")({
   head: () => ({ meta: [{ title: "Create Request — Smart Approval System" }] }),
   validateSearch: (s: Record<string, unknown>) => ({ edit: typeof s.edit === "string" ? s.edit : undefined }),
   component: CreatePage,
 });
+
 
 const TYPES = ["Travel Expense", "Equipment", "Training", "Office Supplies", "Maintenance", "Medical Reimbursement"];
 const DEPTS = ["Engineering", "Operations", "Finance", "HR", "Marketing", "Legal"];
