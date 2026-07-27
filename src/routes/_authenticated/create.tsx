@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { UploadCloud, FileText, X, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/app-shell";
@@ -9,12 +9,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { PdfSigner, type SignaturePlacement } from "@/components/pdf-signer";
 
 export const Route = createFileRoute("/_authenticated/create")({
   head: () => ({ meta: [{ title: "Create Request — Smart Approval System" }] }),
   validateSearch: (s: Record<string, unknown>) => ({ edit: typeof s.edit === "string" ? s.edit : undefined }),
   component: CreatePage,
 });
+
 
 const TYPES = ["Travel Expense", "Equipment", "Training", "Office Supplies", "Maintenance", "Medical Reimbursement"];
 const DEPTS = ["Engineering", "Operations", "Finance", "HR", "Marketing", "Legal"];
@@ -25,9 +27,12 @@ function CreatePage() {
   const { edit: editId } = useSearch({ from: "/_authenticated/create" });
   const { data: user } = useCurrentUser();
   const [files, setFiles] = useState<File[]>([]);
-  const [existingAttachments, setExistingAttachments] = useState<{ id: string; file_name: string; storage_path: string }[]>([]);
+  const [existingAttachments, setExistingAttachments] = useState<{ id: string; file_name: string; storage_path: string; mime_type: string | null }[]>([]);
   const [loading, setLoading] = useState(false);
+  const [placement, setPlacement] = useState<SignaturePlacement | null>(null);
+  const [previewBytes, setPreviewBytes] = useState<ArrayBuffer | null>(null);
   const isEdit = !!editId;
+
 
   const [form, setForm] = useState({
     request_type: TYPES[0],
@@ -46,7 +51,7 @@ function CreatePage() {
     (async () => {
       const [{ data: r }, { data: att }] = await Promise.all([
         supabase.from("requests").select("*").eq("id", editId).single(),
-        supabase.from("request_attachments").select("id, file_name, storage_path").eq("request_id", editId),
+        supabase.from("request_attachments").select("id, file_name, storage_path, mime_type").eq("request_id", editId),
       ]);
       if (r) {
         setForm({
@@ -60,10 +65,39 @@ function CreatePage() {
           amount: String(r.amount ?? ""),
           payment_method: r.payment_method ?? "",
         });
+        if (r.signature_meta) setPlacement(r.signature_meta as unknown as SignaturePlacement);
       }
       setExistingAttachments(att ?? []);
     })();
   }, [editId]);
+
+  // Load PDF bytes for placement preview — prefer a newly picked file, else first existing PDF
+  const firstNewPdf = useMemo(() => files.find((f) => f.type === "application/pdf") ?? null, [files]);
+  const firstExistingPdf = useMemo(
+    () => existingAttachments.find((a) => (a.mime_type ?? "").includes("pdf")) ?? null,
+    [existingAttachments],
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (firstNewPdf) {
+        const buf = await firstNewPdf.arrayBuffer();
+        if (!cancelled) setPreviewBytes(buf);
+        return;
+      }
+      if (firstExistingPdf) {
+        const { data } = await supabase.storage.from("attachments").createSignedUrl(firstExistingPdf.storage_path, 300);
+        if (!data?.signedUrl) return;
+        const buf = await (await fetch(data.signedUrl)).arrayBuffer();
+        if (!cancelled) setPreviewBytes(buf);
+        return;
+      }
+      setPreviewBytes(null);
+    })();
+    return () => { cancelled = true; };
+  }, [firstNewPdf, firstExistingPdf]);
+
 
   const setF = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm((s) => ({ ...s, [k]: v }));
 
@@ -96,7 +130,9 @@ function CreatePage() {
         description: form.description || null,
         amount: Number(form.amount || 0),
         payment_method: form.payment_method || null,
+        signature_meta: (placement ?? null) as unknown as never,
       };
+
 
       let requestId = editId;
       if (isEdit && editId) {
@@ -245,6 +281,25 @@ function CreatePage() {
               </ul>
             )}
           </Section>
+
+          <Section title="Signature placement">
+            <p className="text-xs text-muted-foreground -mt-2">
+              Drag the box to mark where the admin should sign. The admin will see this placement and can fine-tune before approving.
+            </p>
+            {previewBytes ? (
+              <PdfSigner
+                pdfBytes={previewBytes}
+                signatureDataUrl={null}
+                initialPlacement={placement ?? undefined}
+                onPlacementChange={setPlacement}
+              />
+            ) : (
+              <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+                Attach a PDF above to mark the signature spot.
+              </div>
+            )}
+          </Section>
+
 
           <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4 border-t border-border">
             <Button type="button" variant="outline" onClick={() => navigate({ to: "/dashboard" })}>Cancel</Button>
