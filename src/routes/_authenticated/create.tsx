@@ -27,9 +27,12 @@ function CreatePage() {
   const { edit: editId } = useSearch({ from: "/_authenticated/create" });
   const { data: user } = useCurrentUser();
   const [files, setFiles] = useState<File[]>([]);
-  const [existingAttachments, setExistingAttachments] = useState<{ id: string; file_name: string; storage_path: string }[]>([]);
+  const [existingAttachments, setExistingAttachments] = useState<{ id: string; file_name: string; storage_path: string; mime_type: string | null }[]>([]);
   const [loading, setLoading] = useState(false);
+  const [placement, setPlacement] = useState<SignaturePlacement | null>(null);
+  const [previewBytes, setPreviewBytes] = useState<ArrayBuffer | null>(null);
   const isEdit = !!editId;
+
 
   const [form, setForm] = useState({
     request_type: TYPES[0],
