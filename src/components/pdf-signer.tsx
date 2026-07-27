@@ -157,9 +157,9 @@ export function PdfSigner({
 
       <div ref={wrapRef} className="relative w-full bg-muted/30 rounded-lg border border-border overflow-hidden touch-none">
         <canvas ref={canvasRef} className="w-full h-auto block" />
-        {signatureDataUrl && renderedSize.w > 0 && (
+        {renderedSize.w > 0 && (
           <div
-            className="absolute border-2 border-primary/70 bg-primary/5 cursor-move select-none"
+            className="absolute border-2 border-dashed border-primary bg-primary/10 cursor-move select-none flex items-center justify-center"
             style={{
               left: placement.xPct * renderedSize.w,
               top: placement.yPct * renderedSize.h,
@@ -170,7 +170,11 @@ export function PdfSigner({
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
           >
-            <img src={signatureDataUrl} alt="signature" className="w-full h-full object-contain pointer-events-none" />
+            {signatureDataUrl ? (
+              <img src={signatureDataUrl} alt="signature" className="w-full h-full object-contain pointer-events-none" />
+            ) : (
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-primary pointer-events-none">Signature here</span>
+            )}
             <div
               className="absolute -right-2 -bottom-2 h-5 w-5 rounded-sm bg-primary border-2 border-white cursor-nwse-resize"
               onPointerDown={onPointerDown("resize")}
@@ -180,6 +184,7 @@ export function PdfSigner({
             />
           </div>
         )}
+
       </div>
     </div>
   );
