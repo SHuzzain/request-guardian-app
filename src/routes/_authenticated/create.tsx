@@ -51,7 +51,7 @@ function CreatePage() {
     (async () => {
       const [{ data: r }, { data: att }] = await Promise.all([
         supabase.from("requests").select("*").eq("id", editId).single(),
-        supabase.from("request_attachments").select("id, file_name, storage_path").eq("request_id", editId),
+        supabase.from("request_attachments").select("id, file_name, storage_path, mime_type").eq("request_id", editId),
       ]);
       if (r) {
         setForm({
