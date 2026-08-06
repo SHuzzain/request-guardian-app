@@ -1,0 +1,14 @@
+# TypeScript Types
+
+Place your TypeScript type definitions here.
+
+Example:
+```typescript
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export type UserRole = "admin" | "user" | "guest";
+```

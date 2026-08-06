@@ -1,0 +1,6 @@
+# Configuration Files
+
+Place your configuration files here such as:
+- Environment variable validation
+- Global event handlers
+- App constants

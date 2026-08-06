@@ -1,9 +1,8 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "tailwind-scrollbar-hide/v4";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
@@ -12,15 +11,74 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --radius: 0.625rem;
+  --background: oklch(100% 0.00011 271.152);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.145 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.961 0 0);
+  --secondary-foreground: oklch(0.145 0 0);
+  --muted: oklch(0.961 0 0);
+  --muted-foreground: oklch(0.455 0.001 271.402);
+  --accent: oklch(0.961 0 0);
+  --accent-foreground: oklch(0.145 0 0);
+  --destructive: oklch(0.577 0.246 29.234);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.898 0 0);
+  --input: oklch(0.898 0 0);
+  --ring: oklch(0.145 0 0);
+  --chart-1: oklch(0.623 0.206 5.901);
+  --chart-2: oklch(0.711 0.152 164.096);
+  --chart-3: oklch(0.501 0.089 271.746);
+  --chart-4: oklch(0.838 0.149 83.503);
+  --chart-5: oklch(0.689 0.179 52.627);
+}
+
+.dark {
+  --background: oklch(20.904% 0.00002 271.152);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(20.904% 0.00002 271.152);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(20.904% 0.00002 271.152);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.145 0 0);
+  --secondary: oklch(0.263 0.004 271.318);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.263 0.004 271.318);
+  --muted-foreground: oklch(0.645 0.005 271.394);
+  --accent: oklch(0.263 0.004 271.318);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.647 0.248 30.908);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.263 0.004 271.318);
+  --input: oklch(0.263 0.004 271.318);
+  --ring: oklch(0.831 0.007 271.429);
+  --chart-1: oklch(0.787 0.17 33.107);
+  --chart-2: oklch(0.706 0.151 195.61);
+  --chart-3: oklch(0.554 0.124 252.408);
+  --chart-4: oklch(0.844 0.139 100.282);
+  --chart-5: oklch(0.763 0.156 60.146);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  .flex-center {
+    @apply flex items-center justify-center;
   }
 }
 
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  height: 100%;
 }

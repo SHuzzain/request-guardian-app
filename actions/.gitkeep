@@ -1,0 +1,12 @@
+# Empty directory for server actions
+
+Place your Next.js server actions here.
+
+Example:
+```typescript
+"use server";
+
+export async function myAction() {
+  // Server-side logic
+}
+```
